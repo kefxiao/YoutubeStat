@@ -1,0 +1,191 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+Elena Xiao, Yuqing Luo
+"""
+
+import tkinter
+from tkinter import *
+from PIL import Image, ImageTk, ImageEnhance
+from tkinter import font as tkFont
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import utility as u
+
+root = Tk()
+root.geometry('1500x2100')
+helv36 = tkFont.Font(family='Courier', size=16, weight='bold')
+font1 = tkFont.Font(family='Courier', size=12)
+
+#create title frame
+youtube_frame = Frame(root)
+youtube_frame.place(relx = 0.12, rely = 0.1, relwidth = 0.8, relheight = 0.08)
+
+#create label under title frame
+youtube_label = Label(youtube_frame, text = 'Youtube Video Stat')
+youtube_label.config(font=('Courier', 44))
+youtube_label.pack()
+
+youtube_image = Image.open('youtube.png')
+youtube_image.thumbnail((100,100))
+test = ImageTk.PhotoImage(youtube_image)
+image_label = Label(image = test)
+image_label.image = test
+image_label.place(x=360, y = 70)
+
+#create search frame
+search_frame = Frame(root )
+search_frame.place(relx = 0.3, rely = 0.3, relwidth = 0.4, relheight = 0.08)
+
+# create seach label 
+
+search_label = Label(search_frame, text = 'Search:')
+search_label.config(font=('Courier', 20))
+search_label.pack(side=LEFT)
+
+#mostPopularChannelInfomation
+info_popular = '''
+ESPN 
+
+(originally an initialism for Entertainment and Sports Programming Network)
+
+Description: 
+    
+an American multinational basic cable sports channel owned by ESPN Inc., owned jointly by The Walt Disney Company (80%) and Hearst Communications (20%). 
+
+The company was founded in 1979.ESPN broadcasts primarily from studio facilities located in Bristol, Connecticut. 
+
+(wiki)
+'''
+
+info_old = '''
+budweiser wassup commercial:
+
+Description:
+    
+Whassup? (also known as Wazzup) was a commercial campaign for Anheuser-Busch Budweiser beer from 1999 to 2002.[1] The first spot aired during Monday Night Football on December 20, 1999. The ad campaign was run worldwide and became a pop culture catchphrase. The phrase itself is a slurred version of the phrase "What's up?".
+
+(wiki)
+'''
+
+#load function
+def load():
+        search_item = search_entry.get()
+        try:
+            if search_item.endswith('.png'):
+                image1 = Image.open(search_item)
+                image1.thumbnail((550,550))
+                test = ImageTk.PhotoImage(image1)
+                image_label = Label(image = test)
+                image_label.image = test
+                image_label.place(x = 850, y = 450)
+                 
+            if search_item == 'most Popular Channel':
+                textbox.insert(END, info_popular )
+                
+            if search_item == 'oldest Trending Video':
+                textbox.insert(END, info_old )
+                
+             
+                
+        except:   
+            textbox.insert(END, 'Error loading file ' + search_item)
+       
+            
+# search entry
+search_entry = Entry(search_frame, bg='white')
+search_item = search_entry.get()
+search_entry.pack()
+load_button = Button(search_frame, text = 'Load..', command =load)
+load_button.config(font=('Courier', 14))
+search_entry.pack(side=LEFT, padx = 20, ipadx=100, ipady=15)
+load_button.pack(side = RIGHT,ipadx=160, ipady=5)
+
+#create chart frame
+chart_frame = Frame(root)
+chart_frame.place(relx = 0.02, rely = 0.5, relwidth = 0.45, relheight = 0.8)
+
+#create menu button under chart frame
+fgbutton = Menubutton(chart_frame, text = 'Visualizations of Youtube Video in 2017 & 2018')   
+fgbutton['font'] = helv36  
+fgbutton.pack(side = TOP, ipadx=160, ipady=5)        
+fgmenu = Menu(fgbutton, tearoff=0)        
+fgbutton['menu'] =fgmenu
+
+
+
+#create menu item
+def viewsLikesPlot():
+    file = u.viewsLikesPlot()
+    bar = Image.open('views.jpg')
+    bar.thumbnail((900,900))      
+    bar = ImageTk.PhotoImage(bar)
+    image_label1=Label(image=bar)
+    image_label1.image = bar
+    image_label1.place(x=100, y=500)
+
+def timeCategoryBar():
+    
+    file = u.timeCategoryBar()
+    bar = Image.open('time.jpg')        
+    bar = ImageTk.PhotoImage(bar)
+    image_label2=Label(image=bar)
+    image_label2.image = bar
+    image_label2.place(x=100, y=500)
+       
+fgmenu.add('command', label = 'The relationship between views and Likes', command = viewsLikesPlot)        
+fgmenu.add('command', label = 'Top categories in 2017 & 2018', command = timeCategoryBar)        
+
+
+#create display_frame
+display_frame = Frame(root)
+display_frame.place(relx = 0.53, rely = 0.5, relwidth = 0.45, relheight = 0.8)
+
+#create clear function
+def clear():          
+    textbox.delete(0, END)
+
+       
+    
+#image manipulation function
+def blur():
+    search_item = search_entry.get()
+    blur = u.blur(search_item)
+    
+    bar = Image.open('blur.png')
+    bar.thumbnail((550,550))       
+    bar = ImageTk.PhotoImage(bar)
+    edge_label = Label(image=bar)
+    edge_label.image = bar
+    edge_label.place(x=850, y=450)
+    
+#create list box frame
+
+listframe = Frame(display_frame,relief='groove')        
+label1 = Label(listframe, text='Result:') 
+label1['font'] = helv36
+button1 = Button(listframe, text = 'Clear', command = clear)
+button2 = Button(listframe, text = 'Blur', command = blur)    
+textbox = Text(listframe)        
+sbl = Scrollbar(listframe, orient=VERTICAL, command=textbox.yview)        
+textbox.configure(yscrollcommand=sbl.set) 
+textbox['font'] = font1   
+label1.pack(side=LEFT, padx=5)  
+button2.pack(side= BOTTOM)        
+button1.pack(side = BOTTOM)              
+sbl.pack(side=RIGHT, fill=Y)        
+textbox.pack(ipadx=5,ipady = 4, fill = X)        
+listframe.pack( fill=X, side = TOP)
+
+
+    
+#button that can manipulate the image    
+
+
+
+root.mainloop()
+
+
