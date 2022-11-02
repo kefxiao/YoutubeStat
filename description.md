@@ -8,5 +8,4 @@
 * There are certain keywords users are able to search in the search bar, ex: most Popular Channel, oldest Trending Video
 * There are two charts made from dataset available in the menu button, ex: the relationship between views and likes, Top categories in 2017 & 2018 
 * There is one image manipulation button to blur the result image 
-## Codes Used
-In other folder 
+
